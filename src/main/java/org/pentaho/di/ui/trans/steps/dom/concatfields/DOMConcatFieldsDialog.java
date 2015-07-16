@@ -83,7 +83,7 @@ import org.pentaho.di.ui.trans.step.TableItemInsertListener;
  * @since 2012-08-31
  *
  */
-public class DOMConcatDialog extends BaseStepDialog implements StepDialogInterface {
+public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogInterface {
   private static Class<?> PKG = DOMConcatFieldsMeta.class; // for i18n purposes, needed by Translator2!!
 
   private CTabFolder wTabFolder;
@@ -163,7 +163,7 @@ public class DOMConcatDialog extends BaseStepDialog implements StepDialogInterfa
 
   private Map<String, Integer> inputFields;
 
-  public DOMConcatDialog( Shell parent, Object in, TransMeta transMeta, String sname ) {
+  public DOMConcatFieldsDialog( Shell parent, Object in, TransMeta transMeta, String sname ) {
     super( parent, (BaseStepMeta) in, transMeta, sname );
     input = (DOMConcatFieldsMeta) in;
     inputFields = new HashMap<String, Integer>();
