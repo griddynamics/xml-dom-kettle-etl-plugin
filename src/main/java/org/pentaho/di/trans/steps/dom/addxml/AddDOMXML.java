@@ -153,19 +153,8 @@ public class AddDOMXML extends BaseStep implements StepInterface {
         }
       }
     }
-/*
-    StringWriter sw = new StringWriter();
-    DOMSource domSource = new DOMSource( xmldoc );
-    try {
-      this.getSerializer().transform( domSource, new StreamResult( sw ) );
 
-    } catch ( TransformerException e ) {
-      throw new KettleException( e );
-    } catch ( Exception e ) {
-      throw new KettleException( e );
-    }*/
-    ValueMetaDom.ViewableDocument vd = new ValueMetaDom.ViewableDocument(xmldoc);
-    Object[] outputRowData = RowDataUtil.addValueData( r, getInputRowMeta().size(), vd );
+    Object[] outputRowData = RowDataUtil.addValueData( r, getInputRowMeta().size(), xmldoc );
 
     putRow( data.outputRowMeta, outputRowData );
 

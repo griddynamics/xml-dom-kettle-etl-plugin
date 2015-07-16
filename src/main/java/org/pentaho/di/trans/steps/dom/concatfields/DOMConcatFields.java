@@ -65,16 +65,15 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 				}
 			}
 
-			ValueMetaDom.ViewableDocument inputDoc = (ValueMetaDom.ViewableDocument) r[data.fieldnrs[0]];
-			Document joinableDoc = inputDoc.getDocument();
+			 
+			Document joinableDoc = (Document)r[data.fieldnrs[0]];
 			data.documentRoot = joinableDoc.getFirstChild();
 		}
 
 		Document resultDocument = mergeDocuments(r);
-		ValueMetaDom.ViewableDocument outputViewableDocument = new ValueMetaDom.ViewableDocument(resultDocument);
 		
 		Object[] outputRowData = RowDataUtil.addValueData(r, getInputRowMeta()
-				.size(), outputViewableDocument);
+				.size(), resultDocument);
 		putRow(data.outputRowMeta, outputRowData);
 
 		// Object extraValue = meta.getValue().getValueData();

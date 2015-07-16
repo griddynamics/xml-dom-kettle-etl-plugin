@@ -228,8 +228,8 @@ public class DOMXslt extends BaseStep implements StepInterface {
     } // end if first
 
     // Get the field value
-    ValueMetaDom.ViewableDocument vd = (ValueMetaDom.ViewableDocument) row[data.fieldposition]; /*getInputRowMeta().getDom( row, data.fieldposition );*/
-    Document xmlValue = vd.getDocument();
+      /*getInputRowMeta().getDom( row, data.fieldposition );*/
+    Document xmlValue = (Document) row[data.fieldposition];;
     if ( meta.useXSLField() ) {
       // Get the value
       data.xslfilename = getInputRowMeta().getString( row, data.fielxslfiledposition );
@@ -277,7 +277,7 @@ public class DOMXslt extends BaseStep implements StepInterface {
                	  
       //By default the DOMResult object creates a Document node to hold the output:
       Document outputDocument = (Document)result.getNode();  
-      ValueMetaDom.ViewableDocument outputViewableDocument = new ValueMetaDom.ViewableDocument(outputDocument);
+      
       //String xmlString = result.getWriter().toString();
       
       /*
@@ -288,7 +288,7 @@ public class DOMXslt extends BaseStep implements StepInterface {
         logDetailed( BaseMessages.getString( PKG, "Xslt.Log.FileResult" ) );
         //logDetailed( xmlString );
       }
-      Object[] outputRowData = RowDataUtil.addValueData( row, getInputRowMeta().size(), outputViewableDocument );
+      Object[] outputRowData = RowDataUtil.addValueData( row, getInputRowMeta().size(), outputDocument );
 
       if ( log.isRowLevel() ) {
         logRowlevel( BaseMessages.getString( PKG, "Xslt.Log.ReadRow" ) + " " + getInputRowMeta().getString( row ) );

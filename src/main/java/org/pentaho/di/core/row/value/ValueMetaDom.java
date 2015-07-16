@@ -25,6 +25,10 @@ public class ValueMetaDom extends ValueMetaBase implements ValueMetaInterface {
 		super(name, TYPE_DOM);
 	}
 
+	public ValueMetaDom(String valueName, int typeString) {
+		super(valueName, typeString);
+	}
+
 	@Override
 	public String getString(Object object) throws KettleValueException {
 		return toString((Document) object);
@@ -38,47 +42,13 @@ public class ValueMetaDom extends ValueMetaBase implements ValueMetaInterface {
 			transformer
 					.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.INDENT, "no");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
 			transformer.transform(new DOMSource(doc), new StreamResult(sw));
 			return sw.toString();
 		} catch (Exception ex) {
 			throw new RuntimeException("Error converting to String", ex);
-		}
-	}
-
-	public static class ViewableDocument {
-		private Document document;
-		
-		public ViewableDocument(Document doc) {
-			document = doc;
-		}
-
-		public Document getDocument() {
-			return document;
-		}
-
-		public void setDocument(Document document) {
-			this.document = document;
-		}
-		
-		@Override
-		public String toString() {
-				  try {
-				      StringWriter sw = new StringWriter();
-				      TransformerFactory tf = TransformerFactory.newInstance();
-				      Transformer transformer = tf.newTransformer();
-				      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-				      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-				      transformer.setOutputProperty(OutputKeys.INDENT, "no");
-				      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-				      transformer.transform(new DOMSource(document), new StreamResult(sw));
-				      return sw.toString();
-				  } catch (Exception ex) {
-				      throw new RuntimeException("Error converting to String", ex);
-				  }
 		}
 	}
 }

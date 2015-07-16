@@ -35,6 +35,7 @@ import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMeta;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.row.value.ValueMetaDom;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
@@ -218,7 +219,7 @@ public class AddDOMXMLMeta extends BaseStepMeta implements StepMetaInterface {
   public void getFields( RowMetaInterface row, String name, RowMetaInterface[] info, StepMeta nextStep,
     VariableSpace space, Repository repository, IMetaStore metaStore ) throws KettleStepException {
 
-    ValueMetaInterface v = new ValueMeta( this.getValueName(), ValueMetaInterface.TYPE_STRING );
+    ValueMetaInterface v = new ValueMetaDom( this.getValueName(), ValueMetaDom.TYPE_DOM );
     v.setOrigin( name );
     row.addValueMeta( v );
   }
