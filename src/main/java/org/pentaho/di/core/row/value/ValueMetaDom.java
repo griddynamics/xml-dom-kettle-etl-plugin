@@ -29,6 +29,11 @@ public class ValueMetaDom extends ValueMetaBase implements ValueMetaInterface {
 		super(valueName, typeString);
 	}
 
+	public ValueMetaDom(String targetFieldName, int typeString,
+			int targetFieldLength, int precision) {
+		super(targetFieldName, typeString, targetFieldLength, precision);
+	}
+
 	@Override
 	public String getString(Object object) throws KettleValueException {
 		return toString((Document) object);

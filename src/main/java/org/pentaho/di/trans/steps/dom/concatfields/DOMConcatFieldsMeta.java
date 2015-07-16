@@ -317,8 +317,8 @@ public class DOMConcatFieldsMeta extends BaseStepMeta implements StepMetaInterfa
 					"ConcatFieldsMeta.CheckResult.TargetFieldNameMissing"));
 		}
 		// add targetFieldName
-		ValueMetaInterface vValue = new ValueMeta(targetFieldName,
-				ValueMetaInterface.TYPE_STRING, targetFieldLength, 0);//ValueMetaDom.TYPE_DOM
+		ValueMetaInterface vValue = new ValueMetaDom(targetFieldName,
+				ValueMetaDom.TYPE_DOM, targetFieldLength, 0);
 		vValue.setOrigin(name);
 
 		row.addValueMeta(vValue);
