@@ -1,0 +1,61 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+project.ext.kettle_dependency_revision = '5.4+'
+project.ext.kettle_test_dependency_revision='4.4+'
+
+project.repositories {
+  ivy {
+    url "http://repo.pentaho.org/artifactory/repo/"
+    layout  "pattern", {
+      ivy "[organisation]/[module]/[revision]/[module]-[revision].ivy.xml"
+      artifact "[organisation]/[module]/[revision]/[module]-[revision].jar"
+      m2compatible = true
+    }
+  }
+  maven {
+    url 'http://repo.pentaho.org/artifactory/repo'
+  }
+  mavenCentral()
+  mavenLocal()
+}
+
+configurations {
+  runtimeWithoutCompile {
+    transitive = false
+  }
+  zip
+}
+
+dependencies {
+  compile("pentaho-kettle:kettle-core:${project.ext.kettle_dependency_revision}")
+  compile("pentaho-kettle:kettle-engine:${project.ext.kettle_dependency_revision}")
+  compile("pentaho-kettle:kettle-ui-swt:${project.ext.kettle_dependency_revision}") {
+    exclude module:'jface'
+  }
+  compile("pentaho-kettle:kettle-engine-test:${project.ext.kettle_dependency_revision}")
+  compile("pentaho-kettle:kettle-test:${project.ext.kettle_test_dependency_revision}")    
+  compile "net.sf.saxon:saxon:9.1.0.8" 
+  compile "net.sf.saxon:saxon-dom:9.1.0.8" 
+  testCompile "org.mockito:mockito-all:1.9.5"
+  testCompile group: 'junit', name: 'junit', version: '4.7'
+}
+
+
+task plugin(dependsOn:jar, type: Zip) {
+  into("${project.name}/") {
+    from jar.outputs.files
+    from fileTree(dir: 'package-res')
+  }
+  into("${project.name}/lib") {
+    from configurations.runtimeWithoutCompile
+  } 
+}
+
+artifacts {
+  zip plugin
+}
+
+task createGradleWrapper(type: Wrapper) {
+  gradleVersion = '1.7'
+}
