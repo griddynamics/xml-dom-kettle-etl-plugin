@@ -120,7 +120,6 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 		return resultDocument;
 	}
 
-	// what to init here? what to init in a first block?
 	public boolean init(StepMetaInterface smi, StepDataInterface sdi) {
 		meta = (DOMConcatFieldsMeta) smi;
 		data = (DOMConcatFieldsData) sdi;
