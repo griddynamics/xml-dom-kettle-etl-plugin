@@ -113,8 +113,7 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 					.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logError("Could not create a document builder", e);
 			return false;
 		}
 

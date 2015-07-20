@@ -204,8 +204,8 @@ public class DOMXslt extends Xslt {
       try {
 		data.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       } catch (ParserConfigurationException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
+		throw new KettleStepException(e);
       }
       
     } // end if first
