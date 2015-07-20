@@ -23,21 +23,16 @@
 package org.pentaho.di.trans.steps.dom.xslt;
 
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileType;
@@ -46,19 +41,15 @@ import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.row.RowDataUtil;
-import org.pentaho.di.core.row.value.ValueMetaDom;
 import org.pentaho.di.core.vfs.KettleVFS;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
-import org.pentaho.di.trans.step.BaseStep;
 import org.pentaho.di.trans.step.StepDataInterface;
-import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.steps.xslt.Xslt;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 /**
  * Executes a XSL Transform on the values in the input stream.
@@ -67,14 +58,11 @@ import org.xml.sax.InputSource;
  * @since 15-Oct-2007
  *
  */
-public class DOMXslt extends BaseStep implements StepInterface {
+public class DOMXslt extends Xslt {
   private static Class<?> PKG = DOMXsltMeta.class; // for i18n purposes, needed by Translator2!!
 
   private DOMXsltMeta meta;
   private DOMXsltData data;
-
-  static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-  static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
   public DOMXslt( StepMeta stepMeta, StepDataInterface stepDataInterface, int copyNr, TransMeta transMeta, Trans trans ) {
     super( stepMeta, stepDataInterface, copyNr, transMeta, trans );
@@ -215,21 +203,15 @@ public class DOMXslt extends BaseStep implements StepInterface {
       
       try {
 		data.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-	} catch (ParserConfigurationException e) {
+      } catch (ParserConfigurationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	}
-      
-      //DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      //Document doc = builder.newDocument();
-      //Result result = new DOMResult(doc);      
-      
+      }
       
     } // end if first
 
     // Get the field value
-      /*getInputRowMeta().getDom( row, data.fieldposition );*/
-    Document xmlValue = (Document) row[data.fieldposition];;
+    Document xmlValue = (Document) row[data.fieldposition];
     if ( meta.useXSLField() ) {
       // Get the value
       data.xslfilename = getInputRowMeta().getString( row, data.fielxslfiledposition );
@@ -266,7 +248,6 @@ public class DOMXslt extends BaseStep implements StepInterface {
 
       Source source = new DOMSource( xmlValue );
       // Prepare output stream
-      //StreamResult result = new StreamResult( new StringWriter() );
       
       Document doc = data.builder.newDocument();
       
@@ -278,12 +259,6 @@ public class DOMXslt extends BaseStep implements StepInterface {
       //By default the DOMResult object creates a Document node to hold the output:
       Document outputDocument = (Document)result.getNode();  
       
-      //String xmlString = result.getWriter().toString();
-      
-      /*
-      InputSource inputSource = new InputSource( new StringReader( xmlString ) );
-      Document targetDOM = data.builder.parse( inputSource );*/
-      //System.out.println(toString(targetDOM));
       if ( log.isDetailed() ) {
         logDetailed( BaseMessages.getString( PKG, "Xslt.Log.FileResult" ) );
         //logDetailed( xmlString );
@@ -316,40 +291,6 @@ public class DOMXslt extends BaseStep implements StepInterface {
 
     return true;
   }
-  
-//  public static String toString(Document doc) {
-//	    try {
-//	        StringWriter sw = new StringWriter();
-//	        TransformerFactory tf = TransformerFactory.newInstance();
-//	        Transformer transformer = tf.newTransformer();
-//	        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-//	        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-//	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-//
-//	        transformer.transform(new DOMSource(doc), new StreamResult(sw));
-//	        return sw.toString();
-//	    } catch (Exception ex) {
-//	        throw new RuntimeException("Error converting to String", ex);
-//	    }
-//	}  
 
-  public boolean init( StepMetaInterface smi, StepDataInterface sdi ) {
-    meta = (DOMXsltMeta) smi;
-    data = (DOMXsltData) sdi;
-    if ( super.init( smi, sdi ) ) {
-      // Specify weither or not we have to deal with XSL filename
-      data.xslIsAfile = ( meta.useXSLField() && meta.isXSLFieldIsAFile() ) || ( !meta.useXSLField() );
-      // Add init code here.
-      return true;
-    }
-    return false;
-  }
 
-  public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
-    meta = (DOMXsltMeta) smi;
-    data = (DOMXsltData) sdi;
-    data.dispose();
-    super.dispose( smi, sdi );
-  }
 }

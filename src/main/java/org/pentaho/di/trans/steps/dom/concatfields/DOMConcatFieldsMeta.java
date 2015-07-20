@@ -31,7 +31,6 @@ import org.pentaho.di.core.annotations.Step;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleStepException;
-import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMeta;
@@ -48,34 +47,27 @@ import org.pentaho.di.trans.step.BaseStepMeta;
 import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
-import org.pentaho.di.trans.step.StepMetaInjectionInterface;
 import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.steps.textfileoutput.TextFileField;
-import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
 import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
-/*
- * ConcatFieldsMeta
- * @author jb
- * @since 2012-08-31
- *
- */
-@Step(id = "DOMConcat", image = "fields-to-map.png", name = "Concat DOM", description = "Joins Document objects", categoryDescription = "Transform")
-public class DOMConcatFieldsMeta extends BaseStepMeta implements StepMetaInterface {
+@Step(id = "DOMConcat", image = "ui/images/ConcatFields.svg", name = "Concat DOM", description = "Joins Document objects", categoryDescription = "Transform")
+public class DOMConcatFieldsMeta extends BaseStepMeta implements
+		StepMetaInterface {
 
-	private static Class<?> PKG = DOMConcatFieldsMeta.class; // for i18n purposes,
-															// needed by
-															// Translator2!!
+	private static Class<?> PKG = DOMConcatFieldsMeta.class; // for i18n
+																// purposes,
+																// needed by
+																// Translator2!!
 
 	// have a different namespace in repository in contrast to the
 	// TextFileOutput
-	private static final String ConcatFieldsNodeNameSpace = "ConcatDOM";
+	private static final String ConcatFieldsNodeNameSpace = "DOMConcat";
 
 	private String targetFieldName; // the target field name
 	private int targetFieldLength; // the length of the string field
-	// private boolean removeSelectedFields; // remove the selected fields in
-	// the output stream
+
 	/** The output fields */
 	private TextFileField[] outputFields;
 
@@ -113,23 +105,23 @@ public class DOMConcatFieldsMeta extends BaseStepMeta implements StepMetaInterfa
 
 	@Override
 	public void setDefault() {
-	    int i, nrfields = 0;
+		int i, nrfields = 0;
 
-	    allocate( nrfields );
+		allocate(nrfields);
 
-	    for ( i = 0; i < nrfields; i++ ) {
-	      outputFields[i] = new TextFileField();
+		for (i = 0; i < nrfields; i++) {
+			outputFields[i] = new TextFileField();
 
-	      outputFields[i].setName( "field" + i );
-	      outputFields[i].setType( "Number" );
-	      outputFields[i].setFormat( " 0,000,000.00;-0,000,000.00" );
-	      outputFields[i].setCurrencySymbol( "" );
-	      outputFields[i].setDecimalSymbol( "," );
-	      outputFields[i].setGroupingSymbol( "." );
-	      outputFields[i].setNullString( "" );
-	      outputFields[i].setLength( -1 );
-	      outputFields[i].setPrecision( -1 );
-	    }
+			outputFields[i].setName("field" + i);
+			outputFields[i].setType("Number");
+			outputFields[i].setFormat(" 0,000,000.00;-0,000,000.00");
+			outputFields[i].setCurrencySymbol("");
+			outputFields[i].setDecimalSymbol(",");
+			outputFields[i].setGroupingSymbol(".");
+			outputFields[i].setNullString("");
+			outputFields[i].setLength(-1);
+			outputFields[i].setPrecision(-1);
+		}
 		targetFieldName = "";
 		targetFieldLength = 0;
 	}
@@ -218,8 +210,6 @@ public class DOMConcatFieldsMeta extends BaseStepMeta implements StepMetaInterfa
 				.addTagValue("targetFieldName", targetFieldName));
 		retval.append(XMLHandler.addTagValue("targetFieldLength",
 				targetFieldLength));
-		// retval = retval + XMLHandler.addTagValue( "removeSelectedFields",
-		// removeSelectedFields );
 		retval.append("    </" + ConcatFieldsNodeNameSpace + ">").append(
 				Const.CR);
 		return retval.toString();
@@ -228,7 +218,6 @@ public class DOMConcatFieldsMeta extends BaseStepMeta implements StepMetaInterfa
 	@Override
 	public void readRep(Repository rep, IMetaStore metaStore, ObjectId id_step,
 			List<DatabaseMeta> databases) throws KettleException {
-		
 
 		int nrfields = rep.countNrStepAttributes(id_step, "field_name");
 
@@ -307,9 +296,6 @@ public class DOMConcatFieldsMeta extends BaseStepMeta implements StepMetaInterfa
 			RowMetaInterface[] info, StepMeta nextStep, VariableSpace space,
 			Repository repository, IMetaStore metaStore)
 			throws KettleStepException {
-		// do not call the super class from TextFileOutputMeta since it modifies
-		// the source meta data
-		// see getFieldsModifyInput() instead
 
 		// Check Target Field Name
 		if (Const.isEmpty(targetFieldName)) {

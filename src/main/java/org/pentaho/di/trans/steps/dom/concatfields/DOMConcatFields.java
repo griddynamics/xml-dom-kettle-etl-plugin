@@ -6,8 +6,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.row.RowDataUtil;
-import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.core.row.value.ValueMetaDom;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -16,7 +14,6 @@ import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
-import org.pentaho.di.trans.steps.addxml.AddXMLMeta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -76,15 +73,6 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 				.size(), resultDocument);
 		putRow(data.outputRowMeta, outputRowData);
 
-		// Object extraValue = meta.getValue().getValueData();
-		//
-		// Object[] outputRow = RowDataUtil.addValueData(r,
-		// data.outputRowMeta.size() - 1, extraValue);
-		//
-		// putRow(data.outputRowMeta, outputRow); // copy row to possible
-		// alternate
-		// // rowset(s).
-
 		return true;
 	}
 
@@ -96,11 +84,8 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 
 		for (int i = 0; i < meta.getOutputFields().length; i++) {
 
-			// ValueMetaInterface v = data.inputRowMetaModified.getValueMeta(
-			// data.fieldnrs[i] );
-
 			Document doc = (Document) (r[data.fieldnrs[i]]);
-			// System.out.println(toString(doc));
+			
 			Element root = doc.getDocumentElement();
 			NodeList childNodes = root.getChildNodes();
 
@@ -110,13 +95,8 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 				rootElement.appendChild(importNode);
 			}
 
-			// Document xmlValue = getInputRowMeta().getDom( row,
-			// data.fieldposition );
-
-			// writeField( v, valueData, data.binaryNullValue[i] );
-
 		}
-		// System.out.println(toString(resultDocument));
+
 		return resultDocument;
 	}
 

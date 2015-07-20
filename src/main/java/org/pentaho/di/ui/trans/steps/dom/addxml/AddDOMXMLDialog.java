@@ -65,8 +65,8 @@ import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.BaseStepMeta;
 import org.pentaho.di.trans.step.StepDialogInterface;
 import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.addxml.XMLField;
 import org.pentaho.di.trans.steps.dom.addxml.AddDOMXMLMeta;
-import org.pentaho.di.trans.steps.dom.addxml.DOMXMLField;
 import org.pentaho.di.ui.core.dialog.ErrorDialog;
 import org.pentaho.di.ui.core.widget.ColumnInfo;
 import org.pentaho.di.ui.core.widget.TableView;
@@ -563,7 +563,7 @@ public class AddDOMXMLDialog extends BaseStepDialog implements StepDialogInterfa
     logDebug( BaseMessages.getString( PKG, "AddXMLDialog.Log.GettingFieldsInfo" ) );
 
     for ( int i = 0; i < input.getOutputFields().length; i++ ) {
-      DOMXMLField field = input.getOutputFields()[i];
+      XMLField field = input.getOutputFields()[i];
 
       TableItem item = wFields.table.getItem( i );
       if ( field.getFieldName() != null ) {
@@ -630,7 +630,7 @@ public class AddDOMXMLDialog extends BaseStepDialog implements StepDialogInterfa
     tfoi.allocate( nrfields );
 
     for ( int i = 0; i < nrfields; i++ ) {
-      DOMXMLField field = new DOMXMLField();
+      XMLField field = new XMLField();
 
       TableItem item = wFields.getNonEmpty( i );
       field.setFieldName( item.getText( 1 ) );

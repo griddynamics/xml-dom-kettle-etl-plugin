@@ -22,7 +22,6 @@
 
 package org.pentaho.di.ui.trans.steps.dom.concatfields;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,17 +29,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -89,66 +85,13 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
   private CTabFolder wTabFolder;
   private FormData fdTabFolder;
 
-  private CTabItem wAdvancedTab, wFieldsTab;
+  private CTabItem wFieldsTab;
 //
-  private FormData fdAdvancedComp, fdFieldsComp;
+  private FormData fdFieldsComp;
 
   private Label wlTargetFieldName;
   private TextVar wTargetFieldName;
   private FormData fdlTargetFieldName, fdTargetFieldName;
-
-  private Label wlTargetFieldLength;
-  //private Text wTargetFieldLength;
-  private FormData fdlTargetFieldLength, fdTargetFieldLength;
-
-//  private Label wlRemoveSelectedFields;
-//  private Button wRemoveSelectedFields;
-//  private FormData fdlRemoveSelectedFields, fdRemoveSelectedFields;
-
-  private Label wlSeparator;
-  private Button wbSeparator;
-  //private TextVar wSeparator;
-  private FormData fdlSeparator, fdbSeparator, fdSeparator;
-
-  private Label wlEnclosure;
-  //private TextVar wEnclosure;
-  private FormData fdlEnclosure, fdEnclosure;
-
-//  private Label wlEndedLine;
-//  private Text wEndedLine;
-//  private FormData fdlEndedLine, fdEndedLine;
-//
-//  private Label wlEnclForced;
-//  private Button wEnclForced;
-//  private FormData fdlEnclForced, fdEnclForced;
-
-  private Label wlDisableEnclosureFix;
-  private Button wDisableEnclosureFix;
-//  private FormData fdlDisableEnclosureFix, fdDisableEnclosureFix;
-//
-//  private Label wlHeader;
-//  private Button wHeader;
-//  private FormData fdlHeader, fdHeader;
-//
-//  private Label wlFooter;
-//  private Button wFooter;
-//  private FormData fdlFooter, fdFooter;
-
-  private Label wlEncoding;
-  private CCombo wEncoding;
-//  private FormData fdlEncoding, fdEncoding;
-
-  private Label wlPad;
-  private Button wPad;
-//  private FormData fdlPad, fdPad;
-//
-//  private Label wlFastDump;
-  private Button wFastDump;
-//  private FormData fdlFastDump, fdFastDump;
-//
-//  private Label wlSplitEvery;
-//  private Text wSplitEvery;
-//  private FormData fdlSplitEvery, fdSplitEvery;
 
   private TableView wFields;
   private FormData fdFields;
@@ -157,7 +100,6 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
 
   private Button wMinWidth;
   private Listener lsMinWidth;
-  private boolean gotEncodings = false;
 
   private ColumnInfo[] colinf;
 
@@ -232,78 +174,7 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
     fdTargetFieldName.top = new FormAttachment( wStepname, margin );
     fdTargetFieldName.right = new FormAttachment( 100, 0 );
     wTargetFieldName.setLayoutData( fdTargetFieldName );
-/*
-    // TargetFieldLength line
-    wlTargetFieldLength = new Label( shell, SWT.RIGHT );
-    wlTargetFieldLength.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.TargetFieldLength.Label" ) );
-    wlTargetFieldLength.setToolTipText( BaseMessages.getString(
-      PKG, "ConcatFieldsDialog.TargetFieldLength.Tooltip" ) );
-    props.setLook( wlTargetFieldLength );
-    fdlTargetFieldLength = new FormData();
-    fdlTargetFieldLength.left = new FormAttachment( 0, 0 );
-    fdlTargetFieldLength.top = new FormAttachment( wTargetFieldName, margin );
-    fdlTargetFieldLength.right = new FormAttachment( middle, -margin );
-    wlTargetFieldLength.setLayoutData( fdlTargetFieldLength );
-    wTargetFieldLength = new Text( shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
-    props.setLook( wTargetFieldLength );
-    wTargetFieldLength.addModifyListener( lsMod );
-    fdTargetFieldLength = new FormData();
-    fdTargetFieldLength.left = new FormAttachment( middle, 0 );
-    fdTargetFieldLength.top = new FormAttachment( wTargetFieldName, margin );
-    fdTargetFieldLength.right = new FormAttachment( 100, 0 );
-    wTargetFieldLength.setLayoutData( fdTargetFieldLength );
 
-    // Separator
-    wlSeparator = new Label( shell, SWT.RIGHT );
-    wlSeparator.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.Separator.Label" ) );
-    props.setLook( wlSeparator );
-    fdlSeparator = new FormData();
-    fdlSeparator.left = new FormAttachment( 0, 0 );
-    fdlSeparator.top = new FormAttachment( wTargetFieldLength, margin );
-    fdlSeparator.right = new FormAttachment( middle, -margin );
-    wlSeparator.setLayoutData( fdlSeparator );
-
-    wbSeparator = new Button( shell, SWT.PUSH | SWT.CENTER );
-    props.setLook( wbSeparator );
-    wbSeparator.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.Separator.Button" ) );
-    fdbSeparator = new FormData();
-    fdbSeparator.right = new FormAttachment( 100, 0 );
-    fdbSeparator.top = new FormAttachment( wTargetFieldLength, margin );
-    wbSeparator.setLayoutData( fdbSeparator );
-    wbSeparator.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent se ) {
-        // wSeparator.insert("\t");
-        wSeparator.getTextWidget().insert( "\t" );
-      }
-    } );
-
-    wSeparator = new TextVar( transMeta, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
-    props.setLook( wSeparator );
-    wSeparator.addModifyListener( lsMod );
-    fdSeparator = new FormData();
-    fdSeparator.left = new FormAttachment( middle, 0 );
-    fdSeparator.top = new FormAttachment( wTargetFieldLength, margin );
-    fdSeparator.right = new FormAttachment( wbSeparator, -margin );
-    wSeparator.setLayoutData( fdSeparator );
-
-    // Enclosure line...
-    wlEnclosure = new Label( shell, SWT.RIGHT );
-    wlEnclosure.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.Enclosure.Label" ) );
-    props.setLook( wlEnclosure );
-    fdlEnclosure = new FormData();
-    fdlEnclosure.left = new FormAttachment( 0, 0 );
-    fdlEnclosure.top = new FormAttachment( wSeparator, margin );
-    fdlEnclosure.right = new FormAttachment( middle, -margin );
-    wlEnclosure.setLayoutData( fdlEnclosure );
-    wEnclosure = new TextVar( transMeta, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
-    props.setLook( wEnclosure );
-    wEnclosure.addModifyListener( lsMod );
-    fdEnclosure = new FormData();
-    fdEnclosure.left = new FormAttachment( middle, 0 );
-    fdEnclosure.top = new FormAttachment( wSeparator, margin );
-    fdEnclosure.right = new FormAttachment( 100, 0 );
-    wEnclosure.setLayoutData( fdEnclosure );
-*/
     // ////////////////////////
     // START OF TABS
     // /
@@ -436,255 +307,6 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
     wFieldsComp.layout();
     wFieldsTab.setControl( wFieldsComp );
 
-    // ////////////////////////
-    // START OF ADVANCED TAB///
-    // /
- /*   wAdvancedTab = new CTabItem( wTabFolder, SWT.NONE );
-    wAdvancedTab.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.AdvancedTab.TabTitle" ) );
-
-    FormLayout contentLayout = new FormLayout();
-    contentLayout.marginWidth = 3;
-    contentLayout.marginHeight = 3;
-
-    Composite wContentComp = new Composite( wTabFolder, SWT.NONE );
-    props.setLook( wContentComp );
-    wContentComp.setLayout( contentLayout );
-
-    // Remove selected fields?
-    wlRemoveSelectedFields = new Label( wContentComp, SWT.RIGHT );
-    wlRemoveSelectedFields
-      .setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.RemoveSelectedFields.Label" ) );
-    wlRemoveSelectedFields.setToolTipText( BaseMessages.getString(
-      PKG, "ConcatFieldsDialog.RemoveSelectedFields.Tooltip" ) );
-    props.setLook( wlRemoveSelectedFields );
-    fdlRemoveSelectedFields = new FormData();
-    fdlRemoveSelectedFields.left = new FormAttachment( 0, 0 );
-    fdlRemoveSelectedFields.top = new FormAttachment( 0, 0 );
-    fdlRemoveSelectedFields.right = new FormAttachment( middle, -margin );
-    wlRemoveSelectedFields.setLayoutData( fdlRemoveSelectedFields );
-    wRemoveSelectedFields = new Button( wContentComp, SWT.CHECK );
-    props.setLook( wRemoveSelectedFields );
-    fdRemoveSelectedFields = new FormData();
-    fdRemoveSelectedFields.left = new FormAttachment( middle, 0 );
-    fdRemoveSelectedFields.top = new FormAttachment( 0, 0 );
-    fdRemoveSelectedFields.right = new FormAttachment( 100, 0 );
-    wRemoveSelectedFields.setLayoutData( fdRemoveSelectedFields );
-    wRemoveSelectedFields.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        input.setChanged();
-      }
-    } );
-
-    // Enclosure forced line
-    wlEnclForced = new Label( wContentComp, SWT.RIGHT );
-    wlEnclForced.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.EnclForced.Label" ) );
-    props.setLook( wlEnclForced );
-    fdlEnclForced = new FormData();
-    fdlEnclForced.left = new FormAttachment( 0, 0 );
-    fdlEnclForced.top = new FormAttachment( wRemoveSelectedFields, margin );
-    fdlEnclForced.right = new FormAttachment( middle, -margin );
-    wlEnclForced.setLayoutData( fdlEnclForced );
-    wEnclForced = new Button( wContentComp, SWT.CHECK );
-    props.setLook( wEnclForced );
-    fdEnclForced = new FormData();
-    fdEnclForced.left = new FormAttachment( middle, 0 );
-    fdEnclForced.top = new FormAttachment( wRemoveSelectedFields, margin );
-    fdEnclForced.right = new FormAttachment( 100, 0 );
-    wEnclForced.setLayoutData( fdEnclForced );
-    wEnclForced.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        input.setChanged();
-      }
-    } );
-
-    // Disable Enclosure Fix
-    wlDisableEnclosureFix = new Label( wContentComp, SWT.RIGHT );
-    wlDisableEnclosureFix.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.DisableEnclosureFix.Label" ) );
-    props.setLook( wlDisableEnclosureFix );
-    fdlDisableEnclosureFix = new FormData();
-    fdlDisableEnclosureFix.left = new FormAttachment( 0, 0 );
-    fdlDisableEnclosureFix.top = new FormAttachment( wEnclForced, margin );
-    fdlDisableEnclosureFix.right = new FormAttachment( middle, -margin );
-    wlDisableEnclosureFix.setLayoutData( fdlDisableEnclosureFix );
-    wDisableEnclosureFix = new Button( wContentComp, SWT.CHECK );
-    props.setLook( wDisableEnclosureFix );
-    fdDisableEnclosureFix = new FormData();
-    fdDisableEnclosureFix.left = new FormAttachment( middle, 0 );
-    fdDisableEnclosureFix.top = new FormAttachment( wEnclForced, margin );
-    fdDisableEnclosureFix.right = new FormAttachment( 100, 0 );
-    wDisableEnclosureFix.setLayoutData( fdDisableEnclosureFix );
-    wDisableEnclosureFix.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        input.setChanged();
-      }
-    } );
-
-    // Header line
-    wlHeader = new Label( wContentComp, SWT.RIGHT );
-    wlHeader.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.Header.Label" ) );
-    props.setLook( wlHeader );
-    fdlHeader = new FormData();
-    fdlHeader.left = new FormAttachment( 0, 0 );
-    fdlHeader.top = new FormAttachment( wDisableEnclosureFix, margin );
-    fdlHeader.right = new FormAttachment( middle, -margin );
-    wlHeader.setLayoutData( fdlHeader );
-    wHeader = new Button( wContentComp, SWT.CHECK );
-    props.setLook( wHeader );
-    fdHeader = new FormData();
-    fdHeader.left = new FormAttachment( middle, 0 );
-    fdHeader.top = new FormAttachment( wDisableEnclosureFix, margin );
-    fdHeader.right = new FormAttachment( 100, 0 );
-    wHeader.setLayoutData( fdHeader );
-    wHeader.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        input.setChanged();
-      }
-    } );
-
-    // Footer line
-    wlFooter = new Label( wContentComp, SWT.RIGHT );
-    wlFooter.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.Footer.Label" ) );
-    props.setLook( wlFooter );
-    fdlFooter = new FormData();
-    fdlFooter.left = new FormAttachment( 0, 0 );
-    fdlFooter.top = new FormAttachment( wHeader, margin );
-    fdlFooter.right = new FormAttachment( middle, -margin );
-    wlFooter.setLayoutData( fdlFooter );
-    wFooter = new Button( wContentComp, SWT.CHECK );
-    props.setLook( wFooter );
-    fdFooter = new FormData();
-    fdFooter.left = new FormAttachment( middle, 0 );
-    fdFooter.top = new FormAttachment( wHeader, margin );
-    fdFooter.right = new FormAttachment( 100, 0 );
-    wFooter.setLayoutData( fdFooter );
-    wFooter.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        input.setChanged();
-      }
-    } );
-
-    // Encoding line
-    wlEncoding = new Label( wContentComp, SWT.RIGHT );
-    wlEncoding.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.Encoding.Label" ) );
-    props.setLook( wlEncoding );
-    fdlEncoding = new FormData();
-    fdlEncoding.left = new FormAttachment( 0, 0 );
-    fdlEncoding.top = new FormAttachment( wFooter, margin );
-    fdlEncoding.right = new FormAttachment( middle, -margin );
-    wlEncoding.setLayoutData( fdlEncoding );
-    wEncoding = new CCombo( wContentComp, SWT.BORDER | SWT.READ_ONLY );
-    wEncoding.setEditable( true );
-    props.setLook( wEncoding );
-    wEncoding.addModifyListener( lsMod );
-    fdEncoding = new FormData();
-    fdEncoding.left = new FormAttachment( middle, 0 );
-    fdEncoding.top = new FormAttachment( wFooter, margin );
-    fdEncoding.right = new FormAttachment( 100, 0 );
-    wEncoding.setLayoutData( fdEncoding );
-    wEncoding.addFocusListener( new FocusListener() {
-      public void focusLost( org.eclipse.swt.events.FocusEvent e ) {
-      }
-
-      public void focusGained( org.eclipse.swt.events.FocusEvent e ) {
-        Cursor busy = new Cursor( shell.getDisplay(), SWT.CURSOR_WAIT );
-        shell.setCursor( busy );
-        setEncodings();
-        shell.setCursor( null );
-        busy.dispose();
-      }
-    } );
-
-    // Pad line
-    wlPad = new Label( wContentComp, SWT.RIGHT );
-    wlPad.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.Pad.Label" ) );
-    props.setLook( wlPad );
-    fdlPad = new FormData();
-    fdlPad.left = new FormAttachment( 0, 0 );
-    fdlPad.top = new FormAttachment( wEncoding, margin );
-    fdlPad.right = new FormAttachment( middle, -margin );
-    wlPad.setLayoutData( fdlPad );
-    wPad = new Button( wContentComp, SWT.CHECK );
-    props.setLook( wPad );
-    fdPad = new FormData();
-    fdPad.left = new FormAttachment( middle, 0 );
-    fdPad.top = new FormAttachment( wEncoding, margin );
-    fdPad.right = new FormAttachment( 100, 0 );
-    wPad.setLayoutData( fdPad );
-    wPad.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        input.setChanged();
-      }
-    } );
-
-    // Fast Dump line
-    wlFastDump = new Label( wContentComp, SWT.RIGHT );
-    wlFastDump.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.FastDump.Label" ) );
-    props.setLook( wlFastDump );
-    fdlFastDump = new FormData();
-    fdlFastDump.left = new FormAttachment( 0, 0 );
-    fdlFastDump.top = new FormAttachment( wPad, margin );
-    fdlFastDump.right = new FormAttachment( middle, -margin );
-    wlFastDump.setLayoutData( fdlFastDump );
-    wFastDump = new Button( wContentComp, SWT.CHECK );
-    props.setLook( wFastDump );
-    fdFastDump = new FormData();
-    fdFastDump.left = new FormAttachment( middle, 0 );
-    fdFastDump.top = new FormAttachment( wPad, margin );
-    fdFastDump.right = new FormAttachment( 100, 0 );
-    wFastDump.setLayoutData( fdFastDump );
-    wFastDump.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        input.setChanged();
-        setFlags();
-      }
-    } );
-
-    // Split Every line
-    wlSplitEvery = new Label( wContentComp, SWT.RIGHT );
-    wlSplitEvery.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.SplitEvery.Label" ) );
-    props.setLook( wlSplitEvery );
-    fdlSplitEvery = new FormData();
-    fdlSplitEvery.left = new FormAttachment( 0, 0 );
-    fdlSplitEvery.top = new FormAttachment( wFastDump, margin );
-    fdlSplitEvery.right = new FormAttachment( middle, -margin );
-    wlSplitEvery.setLayoutData( fdlSplitEvery );
-    wSplitEvery = new Text( wContentComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
-    props.setLook( wSplitEvery );
-    wSplitEvery.addModifyListener( lsMod );
-    fdSplitEvery = new FormData();
-    fdSplitEvery.left = new FormAttachment( middle, 0 );
-    fdSplitEvery.top = new FormAttachment( wFastDump, margin );
-    fdSplitEvery.right = new FormAttachment( 100, 0 );
-    wSplitEvery.setLayoutData( fdSplitEvery );
-
-    // Bruise:
-    wlEndedLine = new Label( wContentComp, SWT.RIGHT );
-    wlEndedLine.setText( BaseMessages.getString( PKG, "ConcatFieldsDialog.EndedLine.Label" ) );
-    props.setLook( wlEndedLine );
-    fdlEndedLine = new FormData();
-    fdlEndedLine.left = new FormAttachment( 0, 0 );
-    fdlEndedLine.top = new FormAttachment( wSplitEvery, margin );
-    fdlEndedLine.right = new FormAttachment( middle, -margin );
-    wlEndedLine.setLayoutData( fdlEndedLine );
-    wEndedLine = new Text( wContentComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
-    props.setLook( wEndedLine );
-    wEndedLine.addModifyListener( lsMod );
-    fdEndedLine = new FormData();
-    fdEndedLine.left = new FormAttachment( middle, 0 );
-    fdEndedLine.top = new FormAttachment( wSplitEvery, margin );
-    fdEndedLine.right = new FormAttachment( 100, 0 );
-    wEndedLine.setLayoutData( fdEndedLine );
-
-    fdAdvancedComp = new FormData();
-    fdAdvancedComp.left = new FormAttachment( 0, 0 );
-    fdAdvancedComp.top = new FormAttachment( 0, 0 );
-    fdAdvancedComp.right = new FormAttachment( 100, 0 );
-    fdAdvancedComp.bottom = new FormAttachment( 100, 0 );
-    wContentComp.setLayoutData( fdAdvancedComp );
-
-    wContentComp.layout();
-    wAdvancedTab.setControl( wContentComp );
-*/
     // ///////////////////////////////////////////////////////////
     // / END OF CONTENT TAB
     // ///////////////////////////////////////////////////////////
@@ -739,8 +361,6 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
 
     wStepname.addSelectionListener( lsDef );
     wTargetFieldName.addSelectionListener( lsDef );
-    //wTargetFieldLength.addSelectionListener( lsDef );
-   // wSeparator.addSelectionListener( lsDef );
 
     // Whenever something changes, set the tooltip to the expanded version:
     wTargetFieldName.addModifyListener( new ModifyListener() {
@@ -799,42 +419,6 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
     Const.sortStrings( fieldNames );
     colinf[0].setComboValues( fieldNames );
   }
-/*
-  protected void setFlags() {
-    // disable a couple of options when running in Fast Data Dump mode
-    //
-    boolean isNotFastDataDump = !wFastDump.getSelection();
-
-    wDisableEnclosureFix.setEnabled( isNotFastDataDump );
-    wlDisableEnclosureFix.setEnabled( isNotFastDataDump );
-
-    wEncoding.setEnabled( isNotFastDataDump );
-    wlEncoding.setEnabled( isNotFastDataDump );
-
-    wPad.setEnabled( isNotFastDataDump );
-    wlPad.setEnabled( isNotFastDataDump );
-  }*/
-
-  private void setEncodings() {
-    // Encoding of the text file:
-    if ( !gotEncodings ) {
-      gotEncodings = true;
-
-      wEncoding.removeAll();
-      List<Charset> values = new ArrayList<Charset>( Charset.availableCharsets().values() );
-      for ( int i = 0; i < values.size(); i++ ) {
-        Charset charSet = values.get( i );
-        wEncoding.add( charSet.displayName() );
-      }
-
-      // Now select the default!
-      String defEncoding = Const.getEnvironmentVariable( "file.encoding", "UTF-8" );
-      int idx = Const.indexOfString( defEncoding, wEncoding.getItems() );
-      if ( idx >= 0 ) {
-        wEncoding.select( idx );
-      }
-    }
-  }
 
   /**
    * Copy information from the meta-data input to the dialog fields.
@@ -844,10 +428,6 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
     if ( input.getTargetFieldName() != null ) {
       wTargetFieldName.setText( input.getTargetFieldName() );
     }
-    //wTargetFieldLength.setText( "" + input.getTargetFieldLength() );
- //   wRemoveSelectedFields.setSelection( input.isRemoveSelectedFields() );
-    // previous fields derived from TextFileOutputDialog
-
 
     logDebug( "getting fields info..." );
 
@@ -887,7 +467,6 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
     }
 
     wFields.optWidth( true );
-    //setFlags();
 
     wStepname.selectAll();
     wStepname.setFocus();
@@ -904,13 +483,8 @@ public class DOMConcatFieldsDialog extends BaseStepDialog implements StepDialogI
   private void getInfo( DOMConcatFieldsMeta tfoi ) {
     // New concat fields
     tfoi.setTargetFieldName( wTargetFieldName.getText() );
-    //tfoi.setTargetFieldLength( Const.toInt( wTargetFieldLength.getText(), 0 ) );
-   /// tfoi.setRemoveSelectedFields( wRemoveSelectedFields.getSelection() );
-    // previous fields derived from TextFileOutputDialog
-
 
     int i;
-    // Table table = wFields.table;
 
     int nrfields = wFields.nrNonEmpty();
 

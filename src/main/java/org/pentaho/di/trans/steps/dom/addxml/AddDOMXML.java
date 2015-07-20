@@ -22,7 +22,6 @@
 
 package org.pentaho.di.trans.steps.dom.addxml;
 
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,17 +29,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.row.RowDataUtil;
 import org.pentaho.di.core.row.ValueMetaInterface;
-import org.pentaho.di.core.row.value.ValueMetaDom;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -49,6 +44,8 @@ import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.steps.addxml.AddXMLData;
+import org.pentaho.di.trans.steps.addxml.XMLField;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,16 +53,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Converts input rows to one or more XML files.
+ * Converts input rows to one or more DOM objects.
  *
- * @author Matt
- * @since 14-jan-2006
  */
 public class AddDOMXML extends BaseStep implements StepInterface {
   private static Class<?> PKG = AddDOMXML.class; // for i18n purposes, needed by Translator2!!
 
   private AddDOMXMLMeta meta;
-  private AddDOMXMLData data;
+  private AddXMLData data;
 
   private DOMImplementation domImplentation;
   private Transformer serializer;
@@ -76,7 +71,7 @@ public class AddDOMXML extends BaseStep implements StepInterface {
 
   public boolean processRow( StepMetaInterface smi, StepDataInterface sdi ) throws KettleException {
     meta = (AddDOMXMLMeta) smi;
-    data = (AddDOMXMLData) sdi;
+    data = (AddXMLData) sdi;
 
     Object[] r = getRow(); // This also waits for a row to be finished.
     if ( r == null ) {
@@ -105,7 +100,7 @@ public class AddDOMXML extends BaseStep implements StepInterface {
     Document xmldoc = getDomImplentation().createDocument( null, meta.getRootNode(), null );
     Element root = xmldoc.getDocumentElement();
     for ( int i = 0; i < meta.getOutputFields().length; i++ ) {
-      DOMXMLField outputField = meta.getOutputFields()[i];
+      XMLField outputField = meta.getOutputFields()[i];
       String fieldname = outputField.getFieldName();
 
       ValueMetaInterface v = getInputRowMeta().getValueMeta( data.fieldIndexes[i] );
@@ -161,7 +156,7 @@ public class AddDOMXML extends BaseStep implements StepInterface {
     return true;
   }
 
-  private String formatField( ValueMetaInterface valueMeta, Object valueData, DOMXMLField field ) throws KettleValueException {
+  private String formatField( ValueMetaInterface valueMeta, Object valueData, XMLField field ) throws KettleValueException {
     String retval = "";
     if ( field == null ) {
       return "";
@@ -254,7 +249,7 @@ public class AddDOMXML extends BaseStep implements StepInterface {
 
   public boolean init( StepMetaInterface smi, StepDataInterface sdi ) {
     meta = (AddDOMXMLMeta) smi;
-    data = (AddDOMXMLData) sdi;
+    data = (AddXMLData) sdi;
     if ( !super.init( smi, sdi ) ) {
       return false;
     }
@@ -282,7 +277,7 @@ public class AddDOMXML extends BaseStep implements StepInterface {
 
   public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
     meta = (AddDOMXMLMeta) smi;
-    data = (AddDOMXMLData) sdi;
+    data = (AddXMLData) sdi;
 
     super.dispose( smi, sdi );
 

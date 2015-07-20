@@ -69,8 +69,7 @@ public class DOMXsltTest extends TestCase {
 
   private static final String OUTPUT = "<root>Yep, it worked!</root>";
 
-private static final String TEST1_XML =
-    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><message>Yep, it worked!</message>";
+  private static final String TEST1_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><message>Yep, it worked!</message>";
   
   private static final Document TEST_DOCUMENT = createTestDocument(TEST1_XML);
   
@@ -79,8 +78,6 @@ private static final String TEST1_XML =
   private static final String TEST1_XSL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     + "<xsl:stylesheet version = \"1.0\" xmlns:xsl = \"http://www.w3.org/1999/XSL/Transform\">"
     + "<xsl:output method = \"text\" encoding = \"UTF-8\"/>"
-    //+ "<!--simply copy the message to the result tree -->" + "<xsl:template match = \"/\">"
-    //+ "<root>" + "<xsl:value-of select = \"message\"/>" + "</root>" + "</xsl:template>" 
     + "<xsl:template match=\"/\">\n" + 
 	"  <root>\n" + 
 	"    <xsl:value-of select=\"message\" />\n" +
@@ -88,11 +85,6 @@ private static final String TEST1_XML =
 	"</xsl:template>\n" 
     + "</xsl:stylesheet>";
   
-  
-
-
-  
-
   private static final String TEST1_FNAME = "template.xsl";
 
   /**
@@ -146,7 +138,7 @@ private static final String TEST1_XML =
     return list;
   }
 
-private static Document createTestDocument(String str) {
+  private static Document createTestDocument(String str) {
 	Document doc = null;
 	try {
 		DocumentBuilder db;
@@ -159,7 +151,7 @@ private static Document createTestDocument(String str) {
 		e.printStackTrace();
 	}
 	return doc;
-}
+  }
 
   public RowMetaInterface createResultRowMetaInterface() {
     RowMetaInterface rm = new RowMeta();
@@ -175,8 +167,9 @@ private static Document createTestDocument(String str) {
 
     return rm;
   }
-public static String toString(Document doc) {
-  try {
+  
+  public static String toString(Document doc) {
+    try {
       StringWriter sw = new StringWriter();
       TransformerFactory tf = TransformerFactory.newInstance();
       Transformer transformer = tf.newTransformer();
@@ -187,10 +180,11 @@ public static String toString(Document doc) {
 
       transformer.transform(new DOMSource(doc), new StreamResult(sw));
       return sw.toString();
-  } catch (Exception ex) {
+    } catch (Exception ex) {
       throw new RuntimeException("Error converting to String", ex);
-  }
-}  
+    }
+  }  
+  
   /**
    * Create result data for test case 1.
    *
@@ -233,11 +227,10 @@ public static String toString(Document doc) {
 
       Object[] r1 = rm1.getData();
       Object[] r2 = rm2.getData();
-//System.out.println(toString((Document)r1[3]));System.out.println(toString((Document)r2[3]));
 
-  if ( !toString((Document)r1[3]).equals(toString((Document)r2[3])) ) {
-	  fail( "row nr " + idx + " is not equal" );
-  }
+      if ( !toString((Document)r1[3]).equals(toString((Document)r2[3])) ) {
+    	fail( "row nr " + idx + " is not equal" );
+      }
 
       if ( rm1.size() != rm2.size() ) {
         fail( "row nr " + idx + " is not equal" );

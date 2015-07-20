@@ -32,10 +32,8 @@ public class ValueMetaDom extends ValueMetaBase implements ValueMetaInterface {
 				transformer.setOutputProperty(OutputKeys.INDENT, "no");
 				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			} catch (TransformerConfigurationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new RuntimeException(e);
-				//e.printStackTrace();
 			}
 		}
 

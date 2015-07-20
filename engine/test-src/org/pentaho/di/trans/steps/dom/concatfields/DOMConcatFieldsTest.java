@@ -22,15 +22,17 @@
 
 package org.pentaho.di.trans.steps.dom.concatfields;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -43,18 +45,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.pentaho.di.TestFailedException;
-import org.pentaho.di.TestUtilities;
 import org.pentaho.di.core.RowMetaAndData;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.logging.LoggingObjectInterface;
-import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.core.row.ValueMeta;
-import org.pentaho.di.core.row.ValueMetaInterface;
-import org.pentaho.di.core.row.value.ValueMetaBase;
-import org.pentaho.di.core.row.value.ValueMetaDom;
 import org.pentaho.di.trans.RowStepCollector;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -66,14 +60,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-/**
- * User: Dzmitry Stsiapanau Date: 2/11/14 Time: 11:00 AM
- */
 public class DOMConcatFieldsTest {
 
 	private class ConcatFieldsHandler extends DOMConcatFields {
@@ -111,25 +97,9 @@ public class DOMConcatFieldsTest {
 			textFileField, textFileField2 };
 	private static String CONCAT_DOM_INPUT1 = "<root><child1>child1 content</child1></root>";
 	private static String CONCAT_DOM_INPUT2 = "<root><child2>child2 content</child2></root>";
-	private static String CONCAT_DOM_INPUT3 = "<differentRoot><child3>child3 content</child3></differentRoot>";
 	private static String EQUAL_ROOT_TAGS_CONCAT_RESULT = "<root><child1>child1 content</child1><child2>child2 content</child2></root>";
-	//private static String DIFFERENT_ROOT_TAGS_CONCAT_RESULT = "<root><child1>child1 content</child1><child2>child2 content</child2></root>";
 	private static DocumentBuilder db;
 	@Rule public TestName name = new TestName();
-
-//	private List<RowMetaAndData> createEqualRootTagsResults(RowMetaInterface rowMetaInterface, Object[] result) {
-//		List<RowMetaAndData> list = new ArrayList<RowMetaAndData>();
-//
-//		Object[] r1 = new Object[] { new Long(1L), "Orlando", "Florida" };
-//		Object[] r2 = new Object[] { new Long(1L), "Orlando", "Florida" };
-//		Object[] r3 = new Object[] { new Long(1L), "Orlando", "Florida" };
-//
-//		list.add(new RowMetaAndData(rowMetaInterface, r1));
-//		list.add(new RowMetaAndData(rowMetaInterface, r2));
-//		list.add(new RowMetaAndData(rowMetaInterface, r3));
-//
-//		return list;
-//	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -148,11 +118,6 @@ public class DOMConcatFieldsTest {
 	public void tearDown() throws Exception {
 		stepMockHelper.cleanUp();
 	}
-
-//	@Test
-//	public void testDifferentRootTagsInputDocs() throws Exception {
-//		getProcessRowResult(CONCAT_DOM_INPUT1, CONCAT_DOM_INPUT3, DIFFERENT_ROOT_TAGS_CONCAT_RESULT);//, createEqualRootTagsResultRow());
-//	}
 
 	@Test
 	public void testEqualRootTagsInputDocs() throws Exception {
@@ -178,15 +143,9 @@ public class DOMConcatFieldsTest {
 				.thenReturn(textFileFields);
 
 		concatFields.setInputRowMeta(inputRowMeta);
-//		List<ValueMetaInterface> valueMetaList = new ArrayList<ValueMetaInterface>();
-//		valueMetaList.add(new ValueMetaBase("Name"));
-//		valueMetaList.add(new ValueMetaBase("Surname"));
-//		RowMeta rowMeta = new RowMeta();
-//		rowMeta.setValueMetaList(valueMetaList);
 		
 		concatFields.init(stepMockHelper.processRowsStepMetaInterface,
 				stepMockHelper.processRowsStepDataInterface);
-		//concatFields.setInputRowMeta(rowMeta);
 		RowStepCollector dummyRowCollector = new RowStepCollector();
 		concatFields.addRowListener(dummyRowCollector);
 		concatFields.processRow(stepMockHelper.processRowsStepMetaInterface,
@@ -194,14 +153,7 @@ public class DOMConcatFieldsTest {
 		List<RowMetaAndData> resultRows = dummyRowCollector.getRowsWritten();
 		 
 		Assert.assertEquals(errMessage,goldenImageXML,toString((Document)resultRows.get(0).getData()[2]));
-			
-		
-		
-//		try {
-//			TestUtilities.checkRows(goldenImageRows, resultRows);
-//		} catch (TestFailedException tfe) {
-//			fail(tfe.getMessage());
-//		}
+
 	}
 
 	private static Document createTestDocument(String str) {
@@ -216,20 +168,21 @@ public class DOMConcatFieldsTest {
 		}
 		return doc;
 	}
+	
 	public static String toString(Document doc) {
-		  try {
-		      StringWriter sw = new StringWriter();
-		      TransformerFactory tf = TransformerFactory.newInstance();
-		      Transformer transformer = tf.newTransformer();
-		      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		      transformer.setOutputProperty(OutputKeys.INDENT, "no");
-		      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		try {
+		    StringWriter sw = new StringWriter();
+		    TransformerFactory tf = TransformerFactory.newInstance();
+		    Transformer transformer = tf.newTransformer();
+		    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+		    transformer.setOutputProperty(OutputKeys.INDENT, "no");
+		    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
-		      transformer.transform(new DOMSource(doc), new StreamResult(sw));
-		      return sw.toString();
-		  } catch (Exception ex) {
-		      throw new RuntimeException("Error converting to String", ex);
-		  }
-		}	
+	        transformer.transform(new DOMSource(doc), new StreamResult(sw));
+	        return sw.toString();
+	    } catch (Exception ex) {
+	        throw new RuntimeException("Error converting to String", ex);
+	    }
+	}	
 }

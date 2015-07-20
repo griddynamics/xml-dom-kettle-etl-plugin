@@ -35,27 +35,27 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.LoggingObjectInterface;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.trans.steps.dom.addxml.AddDOMXML;
-import org.pentaho.di.trans.steps.dom.addxml.AddDOMXMLData;
+import org.pentaho.di.trans.steps.addxml.AddXMLData;
 import org.pentaho.di.trans.steps.dom.addxml.AddDOMXMLMeta;
-import org.pentaho.di.trans.steps.dom.addxml.DOMXMLField;
+import org.pentaho.di.trans.steps.addxml.XMLField;
 import org.pentaho.di.trans.steps.mock.StepMockHelper;
 import org.pentaho.di.www.SocketRepository;
 
 public class AddDOMXMLTest {
 
-  private StepMockHelper<AddDOMXMLMeta, AddDOMXMLData> stepMockHelper;
+  private StepMockHelper<AddDOMXMLMeta, AddXMLData> stepMockHelper;
 
   @Before
   public void setup() {
-    DOMXMLField field = mock( DOMXMLField.class );
+    XMLField field = mock( XMLField.class );
     when( field.getElementName() ).thenReturn( "ADDXML_TEST" );
     when( field.isAttribute() ).thenReturn( true );
 
-    stepMockHelper = new StepMockHelper<AddDOMXMLMeta, AddDOMXMLData>( "ADDXML_TEST", AddDOMXMLMeta.class, AddDOMXMLData.class );
+    stepMockHelper = new StepMockHelper<AddDOMXMLMeta, AddXMLData>( "ADDXML_TEST", AddDOMXMLMeta.class, AddXMLData.class );
     when( stepMockHelper.logChannelInterfaceFactory.create( any(), any( LoggingObjectInterface.class ) ) ).thenReturn( stepMockHelper.logChannelInterface );
     when( stepMockHelper.trans.isRunning() ).thenReturn( true );
     when( stepMockHelper.trans.getSocketRepository() ).thenReturn( mock( SocketRepository.class ) );
-    when( stepMockHelper.initStepMetaInterface.getOutputFields() ).thenReturn( new DOMXMLField[] { field } );
+    when( stepMockHelper.initStepMetaInterface.getOutputFields() ).thenReturn( new XMLField[] { field } );
     when( stepMockHelper.initStepMetaInterface.getRootNode() ).thenReturn( "ADDXML_TEST" );
   }
 
