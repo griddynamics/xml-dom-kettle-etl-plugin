@@ -11,6 +11,6 @@ public class DOMConcatFieldsData extends BaseStepData implements StepDataInterfa
   public RowMetaInterface outputRowMeta;
   public DocumentBuilder documentBuilder;
   public int[] fieldnrs;
-  public Node documentRoot;
+  public String documentRootName;
   public RowMetaInterface inputRowMetaModified; 
 }

@@ -64,7 +64,7 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 
        
       Document joinableDoc = (Document)r[data.fieldnrs[0]];
-      data.documentRoot = joinableDoc.getFirstChild();
+      data.documentRootName = joinableDoc.getFirstChild().getNodeName();
     }
 
     Document resultDocument = mergeDocuments(r);
@@ -78,8 +78,7 @@ public class DOMConcatFields extends BaseStep implements StepInterface {
 
   private Document mergeDocuments(Object[] r) {
     Document resultDocument = data.documentBuilder.newDocument();
-    Element rootElement = resultDocument.createElement(data.documentRoot
-        .getNodeName());
+    Element rootElement = resultDocument.createElement(data.documentRootName);
     resultDocument.appendChild(rootElement);
 
     for (int i = 0; i < meta.getOutputFields().length; i++) {

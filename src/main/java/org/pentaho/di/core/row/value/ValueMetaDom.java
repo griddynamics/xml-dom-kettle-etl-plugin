@@ -27,7 +27,7 @@ public class ValueMetaDom extends ValueMetaBase implements ValueMetaInterface {
       try {
         transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-            "no");
+            "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.INDENT, "no");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
