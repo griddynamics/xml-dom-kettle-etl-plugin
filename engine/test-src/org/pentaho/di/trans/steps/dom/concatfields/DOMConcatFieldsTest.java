@@ -62,127 +62,127 @@ import org.xml.sax.SAXException;
 
 public class DOMConcatFieldsTest {
 
-	private class ConcatFieldsHandler extends DOMConcatFields {
+  private class ConcatFieldsHandler extends DOMConcatFields {
 
-		private Object[] row;
+    private Object[] row;
 
-		public ConcatFieldsHandler(StepMeta stepMeta,
-				StepDataInterface stepDataInterface, int copyNr,
-				TransMeta transMeta, Trans trans) {
-			super(stepMeta, stepDataInterface, copyNr, transMeta, trans);
-		}
+    public ConcatFieldsHandler(StepMeta stepMeta,
+        StepDataInterface stepDataInterface, int copyNr,
+        TransMeta transMeta, Trans trans) {
+      super(stepMeta, stepDataInterface, copyNr, transMeta, trans);
+    }
 
-		/**
-		 * In case of getRow, we receive data from previous steps through the
-		 * input rowset. In case we split the stream, we have to copy the data
-		 * to the alternate splits: rowsets 1 through n.
-		 */
-		@Override
-		public Object[] getRow() throws KettleException {
-			return row;
-		}
+    /**
+     * In case of getRow, we receive data from previous steps through the
+     * input rowset. In case we split the stream, we have to copy the data
+     * to the alternate splits: rowsets 1 through n.
+     */
+    @Override
+    public Object[] getRow() throws KettleException {
+      return row;
+    }
 
-		public void setRow(Object[] row) {
-			this.row = row;
-		}
+    public void setRow(Object[] row) {
+      this.row = row;
+    }
 
-	}
+  }
 
-	private StepMockHelper<DOMConcatFieldsMeta, DOMConcatFieldsData> stepMockHelper;
-	private TextFileField textFileField = new TextFileField("Name", 2, "", 10,
-			20, "", "", "", "");
-	private TextFileField textFileField2 = new TextFileField("Surname", 2, "",
-			10, 20, "", "", "", "");
-	private TextFileField[] textFileFields = new TextFileField[] {
-			textFileField, textFileField2 };
-	private static String CONCAT_DOM_INPUT1 = "<root><child1>child1 content</child1></root>";
-	private static String CONCAT_DOM_INPUT2 = "<root><child2>child2 content</child2></root>";
-	private static String EQUAL_ROOT_TAGS_CONCAT_RESULT = "<root><child1>child1 content</child1><child2>child2 content</child2></root>";
-	private static DocumentBuilder db;
-	@Rule public TestName name = new TestName();
+  private StepMockHelper<DOMConcatFieldsMeta, DOMConcatFieldsData> stepMockHelper;
+  private TextFileField textFileField = new TextFileField("Name", 2, "", 10,
+      20, "", "", "", "");
+  private TextFileField textFileField2 = new TextFileField("Surname", 2, "",
+      10, 20, "", "", "", "");
+  private TextFileField[] textFileFields = new TextFileField[] {
+      textFileField, textFileField2 };
+  private static String CONCAT_DOM_INPUT1 = "<root><child1>child1 content</child1></root>";
+  private static String CONCAT_DOM_INPUT2 = "<root><child2>child2 content</child2></root>";
+  private static String EQUAL_ROOT_TAGS_CONCAT_RESULT = "<root><child1>child1 content</child1><child2>child2 content</child2></root>";
+  private static DocumentBuilder db;
+  @Rule public TestName name = new TestName();
 
-	@Before
-	public void setUp() throws Exception {
-		stepMockHelper = new StepMockHelper<DOMConcatFieldsMeta, DOMConcatFieldsData>(
-				"CONCAT DOM FIELDS TEST", DOMConcatFieldsMeta.class,
-				DOMConcatFieldsData.class);
-		when(
-				stepMockHelper.logChannelInterfaceFactory.create(any(),
-						any(LoggingObjectInterface.class))).thenReturn(
-				stepMockHelper.logChannelInterface);
-		when(stepMockHelper.trans.isRunning()).thenReturn(true);
-		db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-	}
+  @Before
+  public void setUp() throws Exception {
+    stepMockHelper = new StepMockHelper<DOMConcatFieldsMeta, DOMConcatFieldsData>(
+        "CONCAT DOM FIELDS TEST", DOMConcatFieldsMeta.class,
+        DOMConcatFieldsData.class);
+    when(
+        stepMockHelper.logChannelInterfaceFactory.create(any(),
+            any(LoggingObjectInterface.class))).thenReturn(
+        stepMockHelper.logChannelInterface);
+    when(stepMockHelper.trans.isRunning()).thenReturn(true);
+    db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+  }
 
-	@After
-	public void tearDown() throws Exception {
-		stepMockHelper.cleanUp();
-	}
+  @After
+  public void tearDown() throws Exception {
+    stepMockHelper.cleanUp();
+  }
 
-	@Test
-	public void testEqualRootTagsInputDocs() throws Exception {
-		getProcessRowResult(CONCAT_DOM_INPUT1, CONCAT_DOM_INPUT2, EQUAL_ROOT_TAGS_CONCAT_RESULT,name.getMethodName() + "failed");
-	}
+  @Test
+  public void testEqualRootTagsInputDocs() throws Exception {
+    getProcessRowResult(CONCAT_DOM_INPUT1, CONCAT_DOM_INPUT2, EQUAL_ROOT_TAGS_CONCAT_RESULT,name.getMethodName() + "failed");
+  }
 
-	private void getProcessRowResult(String doc1, String doc2,
-			String goldenImageXML, String errMessage) throws Exception {
-		ConcatFieldsHandler concatFields = new ConcatFieldsHandler(
-				stepMockHelper.stepMeta, stepMockHelper.stepDataInterface, 0,
-				stepMockHelper.transMeta, stepMockHelper.trans);
-		Object[] row = new Object[] { createTestDocument(doc1),
-				createTestDocument(doc2) };
-		String[] fieldNames = new String[] { "one", "two" };
-		concatFields.setRow(row);
-		RowMetaInterface inputRowMeta = mock(RowMetaInterface.class);
-		when(inputRowMeta.clone()).thenReturn(inputRowMeta);
-		when(inputRowMeta.size()).thenReturn(2);
-		when(inputRowMeta.getFieldNames()).thenReturn(fieldNames);
-		when(inputRowMeta.indexOfValue("Name")).thenReturn(0);
-		when(inputRowMeta.indexOfValue("Surname")).thenReturn(1);
-		when(stepMockHelper.processRowsStepMetaInterface.getOutputFields())
-				.thenReturn(textFileFields);
+  private void getProcessRowResult(String doc1, String doc2,
+      String goldenImageXML, String errMessage) throws Exception {
+    ConcatFieldsHandler concatFields = new ConcatFieldsHandler(
+        stepMockHelper.stepMeta, stepMockHelper.stepDataInterface, 0,
+        stepMockHelper.transMeta, stepMockHelper.trans);
+    Object[] row = new Object[] { createTestDocument(doc1),
+        createTestDocument(doc2) };
+    String[] fieldNames = new String[] { "one", "two" };
+    concatFields.setRow(row);
+    RowMetaInterface inputRowMeta = mock(RowMetaInterface.class);
+    when(inputRowMeta.clone()).thenReturn(inputRowMeta);
+    when(inputRowMeta.size()).thenReturn(2);
+    when(inputRowMeta.getFieldNames()).thenReturn(fieldNames);
+    when(inputRowMeta.indexOfValue("Name")).thenReturn(0);
+    when(inputRowMeta.indexOfValue("Surname")).thenReturn(1);
+    when(stepMockHelper.processRowsStepMetaInterface.getOutputFields())
+        .thenReturn(textFileFields);
 
-		concatFields.setInputRowMeta(inputRowMeta);
-		
-		concatFields.init(stepMockHelper.processRowsStepMetaInterface,
-				stepMockHelper.processRowsStepDataInterface);
-		RowStepCollector dummyRowCollector = new RowStepCollector();
-		concatFields.addRowListener(dummyRowCollector);
-		concatFields.processRow(stepMockHelper.processRowsStepMetaInterface,
-				stepMockHelper.processRowsStepDataInterface);
-		List<RowMetaAndData> resultRows = dummyRowCollector.getRowsWritten();
-		 
-		Assert.assertEquals(errMessage,goldenImageXML,toString((Document)resultRows.get(0).getData()[2]));
+    concatFields.setInputRowMeta(inputRowMeta);
+    
+    concatFields.init(stepMockHelper.processRowsStepMetaInterface,
+        stepMockHelper.processRowsStepDataInterface);
+    RowStepCollector dummyRowCollector = new RowStepCollector();
+    concatFields.addRowListener(dummyRowCollector);
+    concatFields.processRow(stepMockHelper.processRowsStepMetaInterface,
+        stepMockHelper.processRowsStepDataInterface);
+    List<RowMetaAndData> resultRows = dummyRowCollector.getRowsWritten();
+     
+    Assert.assertEquals(errMessage,goldenImageXML,toString((Document)resultRows.get(0).getData()[2]));
 
-	}
+  }
 
-	private static Document createTestDocument(String str) {
-		Document doc = null;
-		try {
-			InputSource is = new InputSource();
-			is.setCharacterStream(new StringReader(str));
-			doc = db.parse(is);
-		} catch (SAXException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return doc;
-	}
-	
-	public static String toString(Document doc) {
-		try {
-		    StringWriter sw = new StringWriter();
-		    TransformerFactory tf = TransformerFactory.newInstance();
-		    Transformer transformer = tf.newTransformer();
-		    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		    transformer.setOutputProperty(OutputKeys.INDENT, "no");
-		    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+  private static Document createTestDocument(String str) {
+    Document doc = null;
+    try {
+      InputSource is = new InputSource();
+      is.setCharacterStream(new StringReader(str));
+      doc = db.parse(is);
+    } catch (SAXException | IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return doc;
+  }
+  
+  public static String toString(Document doc) {
+    try {
+        StringWriter sw = new StringWriter();
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
-	        transformer.transform(new DOMSource(doc), new StreamResult(sw));
-	        return sw.toString();
-	    } catch (Exception ex) {
-	        throw new RuntimeException("Error converting to String", ex);
-	    }
-	}	
+          transformer.transform(new DOMSource(doc), new StreamResult(sw));
+          return sw.toString();
+      } catch (Exception ex) {
+          throw new RuntimeException("Error converting to String", ex);
+      }
+  } 
 }

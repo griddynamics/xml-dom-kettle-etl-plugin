@@ -78,11 +78,11 @@ public class DOMXsltTest extends TestCase {
   private static final String TEST1_XSL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     + "<xsl:stylesheet version = \"1.0\" xmlns:xsl = \"http://www.w3.org/1999/XSL/Transform\">"
     + "<xsl:output method = \"text\" encoding = \"UTF-8\"/>"
-    + "<xsl:template match=\"/\">\n" + 
-	"  <root>\n" + 
-	"    <xsl:value-of select=\"message\" />\n" +
-	"  </root>\n" + 
-	"</xsl:template>\n" 
+    + "<xsl:template match=\"/\">\n" 
+    + "  <root>\n"
+    + "    <xsl:value-of select=\"message\" />\n" 
+    + "  </root>\n" 
+    + "</xsl:template>\n" 
     + "</xsl:stylesheet>";
   
   private static final String TEST1_FNAME = "template.xsl";
@@ -129,28 +129,27 @@ public class DOMXsltTest extends TestCase {
     List<RowMetaAndData> list = new ArrayList<RowMetaAndData>();
 
     RowMetaInterface rm = createRowMetaInterface();
-		
-		   Object[] r1 = new Object[] { TEST_DOCUMENT, TEST1_XSL, fileName };
+    
+    Object[] r1 = new Object[] { TEST_DOCUMENT, TEST1_XSL, fileName };
 
-		    list.add( new RowMetaAndData( rm, r1 ) ); 
-
+    list.add( new RowMetaAndData( rm, r1 ) ); 
 
     return list;
   }
 
   private static Document createTestDocument(String str) {
-	Document doc = null;
-	try {
-		DocumentBuilder db;
-			db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		    InputSource is = new InputSource();
-		    is.setCharacterStream(new StringReader(str));
-				doc = db.parse(is);
-	} catch (ParserConfigurationException | SAXException | IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	return doc;
+    Document doc = null;
+    try {
+      DocumentBuilder db;
+      db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      InputSource is = new InputSource();
+      is.setCharacterStream(new StringReader(str));
+      doc = db.parse(is);
+    } catch (ParserConfigurationException | SAXException | IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return doc;
   }
 
   public RowMetaInterface createResultRowMetaInterface() {
@@ -229,7 +228,7 @@ public class DOMXsltTest extends TestCase {
       Object[] r2 = rm2.getData();
 
       if ( !toString((Document)r1[3]).equals(toString((Document)r2[3])) ) {
-    	fail( "row nr " + idx + " is not equal" );
+      fail( "row nr " + idx + " is not equal" );
       }
 
       if ( rm1.size() != rm2.size() ) {

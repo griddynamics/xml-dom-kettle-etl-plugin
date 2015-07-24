@@ -202,10 +202,10 @@ public class DOMXslt extends Xslt {
       }
       
       try {
-		data.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        data.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       } catch (ParserConfigurationException e) {
-		e.printStackTrace();
-		throw new KettleStepException(e);
+        e.printStackTrace();
+        throw new KettleStepException(e);
       }
       
     } // end if first

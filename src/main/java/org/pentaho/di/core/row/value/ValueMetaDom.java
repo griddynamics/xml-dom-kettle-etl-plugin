@@ -16,64 +16,64 @@ import org.w3c.dom.Document;
 @ValueMetaPlugin(id = "200", name = "DOM", description = "DOM type")
 public class ValueMetaDom extends ValueMetaBase implements ValueMetaInterface {
 
-	public static final int TYPE_DOM = 200;
+  public static final int TYPE_DOM = 200;
 
-	private enum DOMToStringSingleton {
+  private enum DOMToStringSingleton {
 
-		INSTANCE;
+    INSTANCE;
 
-		DOMToStringSingleton() {
-			TransformerFactory tf = TransformerFactory.newInstance();
-			try {
-				transformer = tf.newTransformer();
-				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-						"no");
-				transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-				transformer.setOutputProperty(OutputKeys.INDENT, "no");
-				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			} catch (TransformerConfigurationException e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		}
+    DOMToStringSingleton() {
+      TransformerFactory tf = TransformerFactory.newInstance();
+      try {
+        transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+            "no");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+      } catch (TransformerConfigurationException e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }
+    }
 
-		private Transformer transformer;
-		
-		public Transformer getTransformer() {
-			return transformer;
-		}
+    private Transformer transformer;
+    
+    public Transformer getTransformer() {
+      return transformer;
+    }
 
-	}
+  }
 
-	public ValueMetaDom() {
-		this(null);
-	}
+  public ValueMetaDom() {
+    this(null);
+  }
 
-	public ValueMetaDom(String name) {
-		super(name, TYPE_DOM);
-	}
+  public ValueMetaDom(String name) {
+    super(name, TYPE_DOM);
+  }
 
-	public ValueMetaDom(String valueName, int typeString) {
-		super(valueName, typeString);
-	}
+  public ValueMetaDom(String valueName, int typeString) {
+    super(valueName, typeString);
+  }
 
-	public ValueMetaDom(String targetFieldName, int typeString,
-			int targetFieldLength, int precision) {
-		super(targetFieldName, typeString, targetFieldLength, precision);
-	}
+  public ValueMetaDom(String targetFieldName, int typeString,
+      int targetFieldLength, int precision) {
+    super(targetFieldName, typeString, targetFieldLength, precision);
+  }
 
-	@Override
-	public String getString(Object object) throws KettleValueException {
-		return toString((Document) object);
-	}
+  @Override
+  public String getString(Object object) throws KettleValueException {
+    return toString((Document) object);
+  }
 
-	public static String toString(Document doc) {
-		try {
-			StringWriter sw = new StringWriter();
-			DOMToStringSingleton.INSTANCE.getTransformer().transform(new DOMSource(doc), new StreamResult(sw));
-			return sw.toString();
-		} catch (Exception ex) {
-			throw new RuntimeException("Error converting to String", ex);
-		}
-	}
+  public static String toString(Document doc) {
+    try {
+      StringWriter sw = new StringWriter();
+      DOMToStringSingleton.INSTANCE.getTransformer().transform(new DOMSource(doc), new StreamResult(sw));
+      return sw.toString();
+    } catch (Exception ex) {
+      throw new RuntimeException("Error converting to String", ex);
+    }
+  }
 }

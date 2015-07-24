@@ -41,18 +41,21 @@ import org.pentaho.metastore.api.IMetaStore;
 public class DOMXsltMeta extends XsltMeta {
   private static Class<?> PKG = DOMXsltMeta.class; // for i18n purposes, needed by Translator2!!
 
-  public void getFields( RowMetaInterface inputRowMeta, String name, RowMetaInterface[] info, StepMeta nextStep,
-    VariableSpace space, Repository repository, IMetaStore metaStore ) throws KettleStepException {
+  public void getFields(RowMetaInterface inputRowMeta, String name,
+      RowMetaInterface[] info, StepMeta nextStep, VariableSpace space,
+      Repository repository, IMetaStore metaStore) throws KettleStepException {
     // Output field (String)
-    ValueMetaInterface v =
-      new ValueMetaDom( space.environmentSubstitute( getResultfieldname() ), ValueMetaDom.TYPE_DOM );
-    v.setOrigin( name );
-    inputRowMeta.addValueMeta( v );
+    ValueMetaInterface v = new ValueMetaDom(
+        space.environmentSubstitute(getResultfieldname()),
+        ValueMetaDom.TYPE_DOM);
+    v.setOrigin(name);
+    inputRowMeta.addValueMeta(v);
   }
 
-  public StepInterface getStep( StepMeta stepMeta, StepDataInterface stepDataInterface, int cnr,
-	TransMeta transMeta, Trans trans ) {
-	return new DOMXslt( stepMeta, stepDataInterface, cnr, transMeta, trans );
+  public StepInterface getStep(StepMeta stepMeta,
+      StepDataInterface stepDataInterface, int cnr, TransMeta transMeta,
+      Trans trans) {
+    return new DOMXslt(stepMeta, stepDataInterface, cnr, transMeta, trans);
 
   }
 
