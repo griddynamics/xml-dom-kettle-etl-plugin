@@ -23,40 +23,76 @@ package org.pentaho.di.trans.steps.dom.addxml;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
-import static java.util.Arrays.asList;
+import static org.mockito.Mockito.when;
+
+import java.io.StringWriter;
+import java.util.List;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.pentaho.di.core.RowSet;
+import org.pentaho.di.core.RowMetaAndData;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.LoggingObjectInterface;
 import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.trans.steps.dom.addxml.AddDOMXML;
+import org.pentaho.di.core.row.value.ValueMetaString;
+import org.pentaho.di.trans.RowStepCollector;
+import org.pentaho.di.trans.Trans;
+import org.pentaho.di.trans.TransMeta;
+import org.pentaho.di.trans.step.StepDataInterface;
+import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.addxml.AddXMLData;
-import org.pentaho.di.trans.steps.dom.addxml.AddDOMXMLMeta;
 import org.pentaho.di.trans.steps.addxml.XMLField;
 import org.pentaho.di.trans.steps.mock.StepMockHelper;
 import org.pentaho.di.www.SocketRepository;
+import org.w3c.dom.Document;
 
 public class AddDOMXMLTest {
+  
+  private static final String ADDDOMXML_PROCESSROW_RESULT = "<ADDDOMXML_TEST_ROW><ADDDOMXML_FIELD_NAME>ROW_DATA</ADDDOMXML_FIELD_NAME></ADDDOMXML_TEST_ROW>";
 
   private StepMockHelper<AddDOMXMLMeta, AddXMLData> stepMockHelper;
+  
+  private class AddDOMXMLHandler extends AddDOMXML {
+
+    private Object[] row;
+    
+    public AddDOMXMLHandler(StepMeta stepMeta, StepDataInterface sdi,
+        int copyNr, TransMeta tm, Trans trans) {
+      super(stepMeta, sdi, copyNr, tm, trans);
+    }
+
+    @Override
+    public Object[] getRow() throws KettleException {
+      return row;
+    }
+
+    public void setRow(Object[] row) {
+      this.row = row;
+    }
+
+  }  
 
   @Before
   public void setup() {
     XMLField field = mock( XMLField.class );
-    when( field.getElementName() ).thenReturn( "ADDXML_TEST" );
-    when( field.isAttribute() ).thenReturn( true );
+    when( field.getElementName() ).thenReturn( "ADDDOMXML_FIELD_NAME" );
+    when( field.isAttribute() ).thenReturn( false );
 
-    stepMockHelper = new StepMockHelper<AddDOMXMLMeta, AddXMLData>( "ADDXML_TEST", AddDOMXMLMeta.class, AddXMLData.class );
+    stepMockHelper = new StepMockHelper<AddDOMXMLMeta, AddXMLData>( "ADDDOMXML_TEST", AddDOMXMLMeta.class, AddXMLData.class );
     when( stepMockHelper.logChannelInterfaceFactory.create( any(), any( LoggingObjectInterface.class ) ) ).thenReturn( stepMockHelper.logChannelInterface );
     when( stepMockHelper.trans.isRunning() ).thenReturn( true );
     when( stepMockHelper.trans.getSocketRepository() ).thenReturn( mock( SocketRepository.class ) );
     when( stepMockHelper.initStepMetaInterface.getOutputFields() ).thenReturn( new XMLField[] { field } );
-    when( stepMockHelper.initStepMetaInterface.getRootNode() ).thenReturn( "ADDXML_TEST" );
+    when( stepMockHelper.initStepMetaInterface.getRootNode() ).thenReturn( "ADDDOMXML_TEST_ROW" );
   }
 
   @After
@@ -66,22 +102,51 @@ public class AddDOMXMLTest {
 
   @Test
   public void testProcessRow() throws KettleException {
-    AddDOMXML addXML =  new AddDOMXML( stepMockHelper.stepMeta, stepMockHelper.stepDataInterface, 0, stepMockHelper.transMeta, stepMockHelper.trans );
+    AddDOMXMLHandler addXML = new AddDOMXMLHandler(
+        stepMockHelper.stepMeta, stepMockHelper.stepDataInterface, 0,
+        stepMockHelper.transMeta, stepMockHelper.trans);
+    Object[] row = new Object[] { "ROW_DATA" };
+    addXML.setRow(row);
     addXML.init( stepMockHelper.initStepMetaInterface, stepMockHelper.initStepDataInterface );
-    addXML.setInputRowSets( asList( createSourceRowSet( "ADDXML_TEST" ) ) );
+    
+    RowMetaInterface inputRowMeta = createInputRowMeta();
 
+    addXML.setInputRowMeta(inputRowMeta);    
+    
+    RowStepCollector dummyRowCollector = new RowStepCollector();
+    addXML.addRowListener(dummyRowCollector);
+    
     assertTrue( addXML.processRow( stepMockHelper.initStepMetaInterface, stepMockHelper.processRowsStepDataInterface ) );
     assertTrue( addXML.getErrors() == 0 );
     assertTrue( addXML.getLinesWritten() > 0 );
+
+    List<RowMetaAndData> resultRows = dummyRowCollector.getRowsWritten();
+     
+    Assert.assertEquals(ADDDOMXML_PROCESSROW_RESULT, toString((Document)resultRows.get(0).getData()[1]));
   }
 
-  private RowSet createSourceRowSet( Object source ) {
-    RowSet sourceRowSet = stepMockHelper.getMockInputRowSet( new Object[] { source } );
-    RowMetaInterface sourceRowMeta = mock( RowMetaInterface.class );
-    when( sourceRowMeta.getFieldNames() ).thenReturn( new String[] { (String) source } );
-    when( sourceRowSet.getRowMeta() ).thenReturn( sourceRowMeta );
-
-    return sourceRowSet;
+  private RowMetaInterface createInputRowMeta() {
+    RowMetaInterface inputRowMeta = mock(RowMetaInterface.class);
+    when(inputRowMeta.getValueMeta( 0 )).thenReturn(new ValueMetaString( "ADDDOMXML_TEST" ));
+    when(inputRowMeta.clone()).thenReturn(inputRowMeta);
+    when(inputRowMeta.size()).thenReturn(1);
+    return inputRowMeta;
   }
 
+  public static String toString(Document doc) {
+    try {
+      StringWriter sw = new StringWriter();
+      TransformerFactory tf = TransformerFactory.newInstance();
+      Transformer transformer = tf.newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+      transformer.setOutputProperty(OutputKeys.INDENT, "no");
+      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+      transformer.transform(new DOMSource(doc), new StreamResult(sw));
+      return sw.toString();
+    } catch (Exception ex) {
+      throw new RuntimeException("Error converting to String", ex);
+    }
+  }    
 }

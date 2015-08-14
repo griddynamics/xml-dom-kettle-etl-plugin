@@ -121,10 +121,10 @@ public class DOMConcatFieldsTest {
 
   @Test
   public void testEqualRootTagsInputDocs() throws Exception {
-    getProcessRowResult(CONCAT_DOM_INPUT1, CONCAT_DOM_INPUT2, EQUAL_ROOT_TAGS_CONCAT_RESULT,name.getMethodName() + "failed");
+    testProcessRow(CONCAT_DOM_INPUT1, CONCAT_DOM_INPUT2, EQUAL_ROOT_TAGS_CONCAT_RESULT,name.getMethodName() + "failed");
   }
 
-  private void getProcessRowResult(String doc1, String doc2,
+  private void testProcessRow(String doc1, String doc2,
       String goldenImageXML, String errMessage) throws Exception {
     ConcatFieldsHandler concatFields = new ConcatFieldsHandler(
         stepMockHelper.stepMeta, stepMockHelper.stepDataInterface, 0,
@@ -171,18 +171,18 @@ public class DOMConcatFieldsTest {
   
   public static String toString(Document doc) {
     try {
-        StringWriter sw = new StringWriter();
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.INDENT, "no");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+      StringWriter sw = new StringWriter();
+      TransformerFactory tf = TransformerFactory.newInstance();
+      Transformer transformer = tf.newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+      transformer.setOutputProperty(OutputKeys.INDENT, "no");
+      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
-          transformer.transform(new DOMSource(doc), new StreamResult(sw));
-          return sw.toString();
-      } catch (Exception ex) {
-          throw new RuntimeException("Error converting to String", ex);
-      }
+      transformer.transform(new DOMSource(doc), new StreamResult(sw));
+      return sw.toString();
+    } catch (Exception ex) {
+      throw new RuntimeException("Error converting to String", ex);
+    }
   } 
 }
