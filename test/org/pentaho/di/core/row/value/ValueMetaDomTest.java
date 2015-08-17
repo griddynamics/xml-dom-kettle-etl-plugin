@@ -15,10 +15,12 @@ import org.xml.sax.SAXException;
 
 public class ValueMetaDomTest {
 
+  private static final String SAMPLE_XML_STRING = "<some><xml>text</xml></some>";
+
   @Test
   public void testGetString() throws ParserConfigurationException, SAXException, IOException, KettleValueException, XPathExpressionException {
     ValueMetaDom vmd = new ValueMetaDom();
-    Document doc = DOMTestUtilities.createTestDocument("<some><xml>text</xml></some>");
+    Document doc = DOMTestUtilities.createTestDocument(SAMPLE_XML_STRING);
     String xmlString = vmd.getString(doc);
     assertNull(DOMTestUtilities.validateXPath(xmlString, new String[]{"/some/xml/text()[1]='text'"}));
   }
