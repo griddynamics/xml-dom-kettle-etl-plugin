@@ -25,21 +25,13 @@ package org.pentaho.di.trans.steps.dom.xslt;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import junit.framework.TestCase;
 
+import org.pentaho.di.DOMTestUtilities;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.RowMetaAndData;
 import org.pentaho.di.core.exception.KettleValueException;
@@ -60,10 +52,6 @@ import org.pentaho.di.trans.steps.dummytrans.DummyTransMeta;
 import org.pentaho.di.trans.steps.injector.InjectorMeta;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputField;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import junit.framework.TestCase;
 
 public class DOMXsltTest extends TestCase {
 
@@ -71,9 +59,9 @@ public class DOMXsltTest extends TestCase {
 
   private static final String TEST1_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><message>Yep, it worked!</message>";
   
-  private static final Document TEST_DOCUMENT = createTestDocument(TEST1_XML);
+  private static final Document TEST_DOCUMENT = DOMTestUtilities.createTestDocument(TEST1_XML);
   
-  private static final Document OUTPUT_DOCUMENT = createTestDocument(OUTPUT);
+  private static final Document OUTPUT_DOCUMENT = DOMTestUtilities.createTestDocument(OUTPUT);
 
   private static final String TEST1_XSL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     + "<xsl:stylesheet version = \"1.0\" xmlns:xsl = \"http://www.w3.org/1999/XSL/Transform\">"
@@ -137,21 +125,6 @@ public class DOMXsltTest extends TestCase {
     return list;
   }
 
-  private static Document createTestDocument(String str) {
-    Document doc = null;
-    try {
-      DocumentBuilder db;
-      db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      InputSource is = new InputSource();
-      is.setCharacterStream(new StringReader(str));
-      doc = db.parse(is);
-    } catch (ParserConfigurationException | SAXException | IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return doc;
-  }
-
   public RowMetaInterface createResultRowMetaInterface() {
     RowMetaInterface rm = new RowMeta();
 
@@ -165,24 +138,7 @@ public class DOMXsltTest extends TestCase {
     }
 
     return rm;
-  }
-  
-  public static String toString(Document doc) {
-    try {
-      StringWriter sw = new StringWriter();
-      TransformerFactory tf = TransformerFactory.newInstance();
-      Transformer transformer = tf.newTransformer();
-      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-      transformer.transform(new DOMSource(doc), new StreamResult(sw));
-      return sw.toString();
-    } catch (Exception ex) {
-      throw new RuntimeException("Error converting to String", ex);
-    }
-  }  
+  } 
   
   /**
    * Create result data for test case 1.
@@ -227,7 +183,7 @@ public class DOMXsltTest extends TestCase {
       Object[] r1 = rm1.getData();
       Object[] r2 = rm2.getData();
 
-      if ( !toString((Document)r1[3]).equals(toString((Document)r2[3])) ) {
+      if ( !DOMTestUtilities.toString((Document)r1[3]).equals(DOMTestUtilities.toString((Document)r2[3])) ) {
       fail( "row nr " + idx + " is not equal" );
       }
 

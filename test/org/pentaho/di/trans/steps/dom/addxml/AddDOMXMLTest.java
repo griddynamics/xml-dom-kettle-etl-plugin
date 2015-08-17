@@ -26,19 +26,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.StringWriter;
 import java.util.List;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.di.DOMTestUtilities;
 import org.pentaho.di.core.RowMetaAndData;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.LoggingObjectInterface;
@@ -122,7 +116,7 @@ public class AddDOMXMLTest {
 
     List<RowMetaAndData> resultRows = dummyRowCollector.getRowsWritten();
      
-    Assert.assertEquals(ADDDOMXML_PROCESSROW_RESULT, toString((Document)resultRows.get(0).getData()[1]));
+    Assert.assertEquals(ADDDOMXML_PROCESSROW_RESULT, DOMTestUtilities.toString((Document)resultRows.get(0).getData()[1]));
   }
 
   private RowMetaInterface createInputRowMeta() {
@@ -132,21 +126,5 @@ public class AddDOMXMLTest {
     when(inputRowMeta.size()).thenReturn(1);
     return inputRowMeta;
   }
-
-  public static String toString(Document doc) {
-    try {
-      StringWriter sw = new StringWriter();
-      TransformerFactory tf = TransformerFactory.newInstance();
-      Transformer transformer = tf.newTransformer();
-      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-      transformer.setOutputProperty(OutputKeys.INDENT, "no");
-      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-      transformer.transform(new DOMSource(doc), new StreamResult(sw));
-      return sw.toString();
-    } catch (Exception ex) {
-      throw new RuntimeException("Error converting to String", ex);
-    }
-  }    
+   
 }
