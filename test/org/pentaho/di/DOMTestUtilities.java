@@ -24,8 +24,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DOMTestUtilities {
-  private static final ThreadLocal<DocumentBuilder> builderTL = new ThreadLocal<>();
-  private static final ThreadLocal<XPath> xpathTL = new ThreadLocal<>();  
+  private static final ThreadLocal<DocumentBuilder> builderTL = new ThreadLocal<DocumentBuilder>();
+  private static final ThreadLocal<XPath> xpathTL = new ThreadLocal<XPath>();  
   
   public static String toString(Document doc) {
     try {
@@ -84,8 +84,10 @@ public class DOMTestUtilities {
       InputSource is = new InputSource();
       is.setCharacterStream(new StringReader(str));
       doc = getXmlDocumentBuilder().parse(is);
-    } catch (SAXException | IOException e) {
-      throw new RuntimeException(e);
+    } catch (SAXException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
     return doc;
   }

@@ -50,7 +50,7 @@ task plugin(dependsOn:jar, type: Zip) {
   into("${project.name}/lib") {
     from configurations.runtimeWithoutCompile
   } 
-  sourceCompatibility = 1.5
+  sourceCompatibility = 1.6
 }
 
 artifacts {
